@@ -13,7 +13,7 @@ class ExpenseListView(ListView):
     context_object_name = 'expenses'
 
     def get_queryset(self):
-        queryset = super().get_queryset().order_by('-date')
+        queryset = super().get_queryset().order_by('-date', '-id')
         category = self.request.GET.get('category')
         date_from = self.request.GET.get('date_from')
         date_to = self.request.GET.get('date_to')

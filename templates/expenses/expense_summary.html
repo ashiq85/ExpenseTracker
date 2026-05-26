@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Monthly Summary - Expense Tracker{% endblock %}
+{% block page_title %}Monthly Summary{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="card summary-header-card">
+        <form method="get" class="month-selector">
+            <label for="month">Select Month:</label>
+            <input type="month" id="month" name="month" value="{{ current_month_value }}" onchange="this.form.submit()">
+        </form>
+        
+        <div class="total-spend">
+            <h3>Total Spent in {{ current_month_display }}</h3>
+            <div class="amount-large">${{ total_amount|default:"0.00" }}</div>
+        </div>
+    </div>
+
+    {% if total_amount > 0 %}
+    <div class="summary-grid">
+        <div class="card chart-card">
+            <h3>Category Breakdown</h3>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="card list-card">
+            <h3>Spending Details</h3>
+            <ul class="category-list">
+                {% for item in category_breakdown %}
+                <li class="category-item">
+                    <div class="cat-info">
+                        <span class="color-dot category-{{ item.category }}"></span>
+                        <span class="cat-name">{{ item.category|title }}</span>
+                    </div>
+                    <span class="cat-amount">${{ item.total }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% else %}
+    <div class="card empty-state mt-4">
+        <div class="empty-icon">📊</div>
+        <h4>No data for this month</h4>
+        <p>You haven't recorded any expenses for {{ current_month_display }}.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if total_amount > 0 %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        const labels = {{ chart_labels|safe }};
+        const data = {{ chart_data|safe }};
+        
+        const categoryColors = {
+            'Food': '#10b981',        // Emerald
+            'Transport': '#3b82f6',   // Blue
+            'Shopping': '#8b5cf6',    // Violet
+            'Bills': '#ef4444',       // Red
+            'Entertainment': '#f59e0b',// Amber
+            'Other': '#6b7280'        // Gray
+        };
+        
+        const bgColors = labels.map(label => categoryColors[label] || categoryColors['Other']);
+        
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: bgColors,
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 14
+                            },
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}

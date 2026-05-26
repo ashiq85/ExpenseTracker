@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if object %}Edit Expense{% else %}Add Expense{% endif %} - Expense Tracker
+{% endblock %}
+
+{% block page_title %}
+    {% if object %}Edit Expense{% else %}Add New Expense{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+    <form method="post" class="expense-form">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+        
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="{{ form.title.id_for_label }}">Title</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <span class="error-text">{{ form.title.errors.0 }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.amount.id_for_label }}">Amount</label>
+                <div class="input-with-icon">
+                    <span class="currency-symbol">$</span>
+                    {{ form.amount }}
+                </div>
+                {% if form.amount.errors %}
+                <span class="error-text">{{ form.amount.errors.0 }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}">Category</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                <span class="error-text">{{ form.category.errors.0 }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.date.id_for_label }}">Date</label>
+                {{ form.date }}
+                {% if form.date.errors %}
+                <span class="error-text">{{ form.date.errors.0 }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="{{ form.note.id_for_label }}">Note (Optional)</label>
+                {{ form.note }}
+                {% if form.note.errors %}
+                <span class="error-text">{{ form.note.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary">
+                {% if object %}Save Changes{% else %}Add Expense{% endif %}
+            </button>
+            <a href="{% url 'expense-list' %}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

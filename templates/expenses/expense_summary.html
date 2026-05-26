@@ -13,7 +13,7 @@
         
         <div class="total-spend">
             <h3>Total Spent in {{ current_month_display }}</h3>
-            <div class="amount-large">${{ total_amount|default:"0.00" }}</div>
+            <div class="amount-large">₹{{ total_amount|default:"0.00" }}</div>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
                         <span class="color-dot category-{{ item.category }}"></span>
                         <span class="cat-name">{{ item.category|title }}</span>
                     </div>
-                    <span class="cat-amount">${{ item.total }}</span>
+                    <span class="cat-amount">₹{{ item.total }}</span>
                 </li>
                 {% endfor %}
             </ul>
@@ -103,7 +103,7 @@
                                     label += ': ';
                                 }
                                 if (context.parsed !== null) {
-                                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed);
+                                    label += new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(context.parsed);
                                 }
                                 return label;
                             }

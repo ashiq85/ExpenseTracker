@@ -59,7 +59,7 @@
                                 {{ expense.get_category_display }}
                             </span>
                         </td>
-                        <td class="amount">${{ expense.amount }}</td>
+                        <td class="amount">₹{{ expense.amount }}</td>
                         <td class="text-muted" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ expense.note|default:'' }}">
                             {{ expense.note|default:"-" }}
                         </td>
